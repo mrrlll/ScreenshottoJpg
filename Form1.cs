@@ -1,4 +1,5 @@
 using System.Drawing.Imaging;
+using IWshRuntimeLibrary;
 
 namespace ScreenshotToJpg
 {
@@ -37,6 +38,25 @@ namespace ScreenshotToJpg
                 }
                 screenshotFolder = Properties.Settings.Default.ScreenshotFolderPath;
             }
+
+            // 初回起動時のスタートアップ登録確認
+            if (!Properties.Settings.Default.IsStartupRegistered)
+            {
+                DialogResult result = MessageBox.Show(
+                    "Windows 起動時にこのアプリケーションを自動的に開始しますか？",
+                    "スタートアップ登録",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Question
+                );
+
+                if (result == DialogResult.Yes)
+                {
+                    RegisterStartup();
+                }
+            }
+
+            // スタートアップ登録状態をメニューに反映
+            startupcheckbox.Checked = Properties.Settings.Default.IsStartupRegistered;
 
             InitializeFileSystemWatcher();
             InitializeNotifyIcon();
@@ -192,6 +212,70 @@ namespace ScreenshotToJpg
         private void notifyIconMenuItemExit(object sender, EventArgs e)
         {
             Application.Exit();
+        }
+
+        private void RegisterStartup()
+        {
+            try
+            {
+                string startupFolderPath = Environment.GetFolderPath(Environment.SpecialFolder.Startup);
+                string shortcutPath = Path.Combine(startupFolderPath, Application.ProductName + ".lnk"); // ショートカットのパス
+                string exePath = Application.ExecutablePath; // 実行ファイルのパス
+
+                // ショートカットを作成
+                WshShell shell = new WshShell();
+                IWshShortcut shortcut = (IWshShortcut)shell.CreateShortcut(shortcutPath);
+                shortcut.TargetPath = exePath;
+                shortcut.WorkingDirectory = Application.StartupPath; // 作業ディレクトリ
+                //shortcut.IconLocation = exePath + ",0"; // アイコン
+                shortcut.Save();
+
+                // アプリケーション設定を更新
+                Properties.Settings.Default.IsStartupRegistered = true;
+                Properties.Settings.Default.Save();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"スタートアップ登録中にエラーが発生しました: {ex.Message}", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void UnregisterStartup()
+        {
+            try
+            {
+                string startupFolderPath = Environment.GetFolderPath(Environment.SpecialFolder.Startup);
+                string shortcutPath = Path.Combine(startupFolderPath, Application.ProductName + ".lnk");
+
+                // ショートカットが存在すれば削除
+                if (System.IO.File.Exists(shortcutPath))
+                {
+                    System.IO.File.Delete(shortcutPath);
+                }
+
+                // アプリケーション設定を更新
+                Properties.Settings.Default.IsStartupRegistered = false;
+                Properties.Settings.Default.Save();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"スタートアップ登録解除中にエラーが発生しました: {ex.Message}", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void startupcheckbox_click(object sender, EventArgs e)
+        {
+            // チェック状態を反転させてから処理
+            startupcheckbox.Checked = !startupcheckbox.Checked;
+
+            if (startupcheckbox.Checked)
+            {
+                RegisterStartup();
+            }
+            else
+            {
+                UnregisterStartup();
+            }
         }
     }
 }

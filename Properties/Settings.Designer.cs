@@ -37,13 +37,13 @@ namespace ScreenshotToJpg.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string 設定 {
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool IsStartupRegistered {
             get {
-                return ((string)(this["設定"]));
+                return ((bool)(this["IsStartupRegistered"]));
             }
             set {
-                this["設定"] = value;
+                this["IsStartupRegistered"] = value;
             }
         }
     }

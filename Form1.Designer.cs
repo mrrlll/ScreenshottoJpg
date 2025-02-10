@@ -31,15 +31,16 @@
             components = new System.ComponentModel.Container();
             notifyIconMenu = new ContextMenuStrip(components);
             フォルダーの選択SToolStripMenuItem = new ToolStripMenuItem();
+            startupcheckbox = new ToolStripMenuItem();
             終了XToolStripMenuItem = new ToolStripMenuItem();
             notifyIconMenu.SuspendLayout();
             SuspendLayout();
             // 
             // notifyIconMenu
             // 
-            notifyIconMenu.Items.AddRange(new ToolStripItem[] { フォルダーの選択SToolStripMenuItem, 終了XToolStripMenuItem });
+            notifyIconMenu.Items.AddRange(new ToolStripItem[] { フォルダーの選択SToolStripMenuItem, startupcheckbox, 終了XToolStripMenuItem });
             notifyIconMenu.Name = "contextMenuStrip1";
-            notifyIconMenu.Size = new Size(181, 70);
+            notifyIconMenu.Size = new Size(181, 92);
             // 
             // フォルダーの選択SToolStripMenuItem
             // 
@@ -47,6 +48,15 @@
             フォルダーの選択SToolStripMenuItem.Size = new Size(180, 22);
             フォルダーの選択SToolStripMenuItem.Text = "フォルダーの選択(&S)";
             フォルダーの選択SToolStripMenuItem.Click += notifyIconMenuItemSelectFolder;
+            // 
+            // startupcheckbox
+            // 
+            startupcheckbox.Checked = true;
+            startupcheckbox.CheckState = CheckState.Checked;
+            startupcheckbox.Name = "startupcheckbox";
+            startupcheckbox.Size = new Size(180, 22);
+            startupcheckbox.Text = "スタートアップ登録 (&R";
+            startupcheckbox.Click += startupcheckbox_click;
             // 
             // 終了XToolStripMenuItem
             // 
@@ -71,5 +81,6 @@
         private ContextMenuStrip notifyIconMenu;
         private ToolStripMenuItem フォルダーの選択SToolStripMenuItem;
         private ToolStripMenuItem 終了XToolStripMenuItem;
+        private ToolStripMenuItem startupcheckbox;
     }
 }
